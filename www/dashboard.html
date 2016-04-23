@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>优酷土豆路由宝</title>
+<link rel="stylesheet" type="text/css" href="css/reset.css?ver=20160121"></link>
+<link rel="stylesheet" type="text/css" href="css/popup.css?ver=20160121"></link>
+<link rel="stylesheet" type="text/css" href="css/tab.css?ver=20160121"></link>
+<link rel="stylesheet" type="text/css" href="css/widget.css?ver=20160121"></link>
+<link rel="stylesheet" type="text/css" href="css/index.css?ver=20160121"></link>
+<link rel="stylesheet" type="text/css" href="css/networkset.css?ver=20160121"></link>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.css?ver=20160121"></link>
+<link rel="stylesheet" type="text/css" href="extend/css/hefot.css?ver=20160121"></link>
+<script type="text/javascript" charset="utf-8" src="js/jquery-1.8.3.min.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8" src="js/jquery.base64.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8" src="js/jquery.cookie.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/jquery.tabs.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/public.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/json2.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/validate.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/nodeClick.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/popup.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/dashboard.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/jquery-ui.min.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="extend/js/common.js?ver=20160121"></script>
+<script type="text/javascript" charset="utf-8"  src="js/upgrade.js?ver=20160121"></script>
+<script>
+if (!Array.prototype.indexOf){
+	Array.prototype.indexOf = function(elt /*, from*/){
+	    var len = this.length >>> 0;
+	    var from = Number(arguments[1]) || 0;
+	    from = (from < 0)
+	         ? Math.ceil(from)
+	         : Math.floor(from);
+	    if (from < 0)
+	      from += len;
+	    for (; from < len; from++)
+	    {
+	      if (from in this &&
+	          this[from] === elt)
+	        return from;
+	    }
+	    return -1;
+  	};
+}
+/**定义公用弹层方法**/
+function showPop(jObj){
+	var comFloat = $("#commonFloat");
+	comFloat.find(".title").text(jObj.title);
+	var butArr = jObj.button;
+	var contentArr = jObj.content;
+	var butHtml="";
+	var butStyle = "";
+	var contentHtml = "";
+	for (var i = 0; i < contentArr.length; i++) {
+		contentHtml += '<p class="alipay_remind">'+contentArr[i].title+'</p>';
+		
+		if (contentArr[i].text.length>0) {
+			var c_t_arr = contentArr[i].text;
+			contentHtml += '<ul class="c_ul">';
+			for (var k = 0; k < c_t_arr.length; k++) {
+				contentHtml += '<li class="c_text">'+c_t_arr[k]+'</li>';
+			}
+			contentHtml += '</ul>';
+		}
+	}
+	if (butArr.length > 0) {
+		if (butArr.length == 1) {
+			butStyle = "alipayA";
+		}else{
+			butStyle = "alipayB";
+		}
+		for (var i = 0; i < butArr.length; i++) {
+			if (butArr[i].type == "ok") {
+				if (butArr[i].link) {
+					butHtml += '<a href="'+butArr[i].link+'" class="'+butStyle+'Ok" target="_blank">'+butArr[i].text+'</a>'
+				}else{
+					butHtml += '<a href="##" class="'+butStyle+'Ok">'+butArr[i].text+'</a>'
+				}
+				
+			}else if(butArr[i].type == "cancel"){
+				if (butArr[i].link) {
+					butHtml += '<a href="'+butArr[i].link+'" class="'+butStyle+'Cancel" target="_blank">'+butArr[i].text+'</a>'
+				}else{
+					butHtml += '<a href="##" class="'+butStyle+'Cancel">'+butArr[i].text+'</a>'
+				}
+			}
+		}
+	}
+
+	comFloat.find(".c_content").html(contentHtml);
+	comFloat.find(".butDetail").html(butHtml);
+	popup.showId("commonFloat",{layerCss:{position:"fixed",left:"50%",top:"50%", marginLeft:"-280px",marginTop:"-135px"},
+		closeBtn:".close",okBtn:"."+butStyle+"Ok",cancelBtn:"."+butStyle+"Cancel",
+		okBtnClick:function(a,b){
+			popup.close(a,b,"hide"); 
+		}
+	}); 
+}
+</script>
+</head>
+<body class="body_bg" style="min-width: 1250px;">
+<div class="upgradeSet">
+	<span style="color:#ff4400;">系统自动升级已开启</span>
+	<span style="color:#333;">，再也不用担心使用旧系统啦！</span>
+	<a class="upButStyle toUpgrade" >立即查看</a>
+	<span class="upButStyle hideUpgrade">忽略</span>
+</div>
+	<div class="header_body">
+		<div class="logo"></div>
+		<div class="nav">
+	       	<ul class="nav_top" id="topmenu">
+		        <li class="current"><a href="##" dataurl="dashboard.html" class="topmenu current">首页</a></li>
+		        <li><a href="##" dataurl="wan.html" class="topmenu">连网设置</a></li>
+		        <li><a href="##" dataurl="wireless.html" class="topmenu">Wi-Fi设置</a></li>
+		        <li><a href="##" dataurl="device.html" class="topmenu">设备管理</a></li>
+		        <li><a href="##" dataurl="advanced_setting.html" class="topmenu">更多设置</a></li>
+	       </ul>
+	    </div>
+	    <div class="nav_right"></div>
+	</div>
+	<div class="router-manage">
+		<div class="leftpanal roter" id="click_event">
+	        <span class="roter_span" id="dev_count"></span>
+		</div>
+	    <div class="roter_hover" id="hidden_enent">
+	        <span class="roter_span" id="dev_count2"></span>
+	        <div class="hover_show"></div>
+	        <a href="device.html" class="she_guanli" id="devmanageurl"></a>
+		</div>
+	    <div class="conter_mi">
+	      	<div class="roter_middel" id="routerFeaturesPanel">
+		        <a href="##" class="btn off_roter" data-panel="wifiStrength" title="设置Wi-Fi信号强度"><span class="wifi_colse"></span></a>
+		        <a href="##" class="btn off_rest" data-panel="visitorsModel" title="设置Wi-Fi访客模式"><span  class="visitor_Close"></span></a>  
+		        <a href="##" class="btn off_meter" data-panel="panelLight"   title="设置面板灯"><span class="moon"></span></a>    
+		        <div class="been_running" id="run_time">已运行</div>
+	      	</div>
+	        <!--Wi-Fi信号强度--> 
+	        <div class="ctional_groups" id="wifiStrength">
+	            <span class="close_btn" data-pos="39|42"></span>
+	            <h2>Wi-Fi信号强度</h2>
+	            <div class="wifiqiangdu">
+	            <div class="grenn">
+	                <span class="active_rida active_rida_cur" data-value="0" data-class="signal_green"></span>
+	                <span class="default" id="wifigreenMode">绿色</span>
+	            </div>
+	            <div class="grenn">
+	                <span class="active_rida" data-value="1" data-class="signal_standard"></span>
+	                <span class="default default2" id="wifibaseMode">标准</span>
+	            </div>
+	            <div class="grenn">
+	                <span class="active_rida" data-value="2" data-class="signal_wall"></span>
+	                <span class="default default3" id="wifistrongMode">穿墙</span>
+	            </div>
+	            </div>
+	            <!-- Wi-Fi已关闭-->
+	            <div class="closing">
+	                <p>Wi-Fi已关闭，</p>
+	                <p>不能设置信号强度。</p>
+	                <p>若设置信号强度，</p>
+	                <p>请到<a href="wireless.html" id="wifiseturl">Wi-Fi设置</a>中开启Wi-Fi。</p>
+	            </div>
+	        </div>
+	         <!--访客模式--> 
+	        <div class="visitors_model" id="visitorsModel">
+				<span class="close_btn"  data-pos="110|4"></span>
+              	<h2>Wi-Fi访客模式</h2>
+             	<div class="fangke_close">
+                 	<p>Wi-Fi已关闭，</p>
+	                <p>不能设置访客模式。</p>
+	                <p>若设置访客模式，</p>
+	                <p>请到<a href="wireless.html" id="wifiseturl2">Wi-Fi设置</a>中开启Wi-Fi。</p>
+             	</div>
+             	<div class="wifi_opens">
+	                <div class="model_fangke"></div>
+	                <p>开启访客模式后，</p>
+	                <p>为您的访客提供无密码的临时Wi-Fi，</p>
+	                <p>不用时请关闭。</p>
+	                <div class="restart">正在重启Wi-Fi... <span></span>秒</div>
+             	</div>
+	        </div>
+	        <!--面板灯--->
+	        <div class="Panel_light" id="panelLight">
+	            <span class="close_btn"  data-pos="182|31"></span>
+              	<h2>面板灯</h2>
+            	<div class="set-btn">
+            		<span class="set-btn22">
+	             		<span class="default-mode mode-btn current">
+	               			<span class="icon-sun"></span>
+	               			<p>标准</p>
+	             		</span>
+            		</span>
+           			<span class="set-btn32">
+             			<span class="night-mode mode-btn">
+               				<span class="icon-moon"></span>
+               				<p>夜间</p>
+             			</span>
+            		</span>
+           		</div>
+	            <div class="quantian">面板灯全天点亮</div>
+	            <div class="Putout"><p id="lighttime">22:00 ~ 08:00自动熄灭</p><p>您可在<a href="advanced_setting.html?page=lightmode" id="lightseturl">面板灯设置</a>修改时段</p></div>
+	        </div>
+	    </div>
+	    <div class="router_righthover" id="router_bhover">
+	    	<div class="router_min" id="router_bhover_box">
+	        	<div class="wangsu_left">
+	            	<img src="images/top.png">
+	                <span id="uspeed2">0</span>
+	                <b>KB/s</b>
+	            </div>
+	            <div class="speedDisplay"><img src="images/speedDisplay_18_icon.png"><span class="forIncomeCount">0</span>KB/s</div>
+	            <div class="clearfix"></div>
+	            <div class="wangsu_right">
+	               <img src="images/botm.png">
+	                <span id="dspeed2">0</span>
+	                <b>KB/s</b>
+	            </div>
+			</div>
+	        <div class="hover_show_ri"></div>
+		</div>
+	    <div class="weilianwang"></div>
+	</div>
+	<div class="min_hj">
+		<div class="preloadyougold">
+		    <span class="loadingbig"></span>
+			<p>正在获取数据...</p>
+		</div>
+	</div>
+	<div class="footer"></div>
+	<div class="guding_yi" style="display:none;" id="tobindbox">
+	    <a href="##" class="abn"></a>
+	    <h2>提示</h2>
+	    <p>参加固定收益计划，需要绑定优酷账号。</p>
+	    <dl>
+	        <dt>绑定优酷账号后：</dt>
+	        <dd>路由宝收益自动存入优酷账号。</dd>
+	        <dd>随时随地兑换优酷土豆会员、看付费电影，还能提现。</dd>
+	        <dd>使用手机APP远程管理路由宝。</dd>
+	    </dl>
+	    <div class="bang_te">
+	        <a href="##" class="bac_1 ok" id="bangdingbtn3">立即绑定</a>
+	        <a href="##" class="bac_2">取消</a>
+	    </div>
+	</div>
+	<!-- 新测速、收益模式弹层-->
+	<div class="standIncome" style="" id="standIncome">
+	    <a href="##" class="btn_ced"></a>
+	    <p class="siTitle">检测上行带宽  设置赚钱模式</p>
+	    <div class="stiContent clearfix">
+	    	<div class="speedLeft clearfix">
+	    		<ul class="calibration">
+	    			<li>100<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>50<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>30<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>20<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>10<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>6<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>4<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>2<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>1<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>0.5<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    			<li>0<span class="scaleUnit">Mbps&nbsp;&nbsp;<span style="font-size:18px;font-weight:900;color:#e5e5e5;overflow: hidden;">─</span> </span></li>
+	    		</ul>
+	    		<div class="dividingDiv">
+		    		<div class="dividingRule" id="slider-vertical">
+		    			
+		    		</div>
+		    		<div class="dividingCurr">
+		    			<div class="speedRemindText">若与实际值偏差太大，会影响上网速度或赚钱能力</div>
+		    			<span class="currSpeed" id="st_currSpeed">0</span>Mbps
+		    		</div>
+	    		</div>
+	    	</div>
+	    	<div class="incomeRight">
+	    		<div class="rightDividing"></div>
+	    		<div class="currSpeed_right">
+	    			收益更高<span style="margin-left:25px;font-size:14px;font-weight: 600;color:#e5e5e5;">—</span><span id="testVal">0</span>Mbps
+	    		</div>
+	    		<div class="freeNode">
+		    		<div class="incomeMode m_4">
+		    			<div class="modeImg" src=""  ></div>
+		    			<div class="modeDesc clearfix">
+		    				<p class="descTitle">激进</p>
+		    				<p class="descText">赚取收益优先</p>
+		    			</div>
+		    		</div>
+		    		<div class="incomeMode m_2">
+		    			<div class="modeImg" src=""  ></div>
+		    			<div class="modeDesc clearfix">
+		    				<p class="descTitle">平衡</p>
+		    				<p class="descText">上网赚钱兼顾</p>
+		    			</div>
+		    		</div>
+		    		<div class="incomeMode m_1">
+		    			<div class="modeImg" src=""  ></div>
+		    			<div class="modeDesc clearfix">
+		    				<p class="descTitle">保守</p>
+		    				<p class="descText">上网体验优先</p>
+		    			</div>
+		    		</div>
+	    		</div>
+	    		<div class="regularNode">
+	    			<div class="incomeMode m_3">
+		    			<div class="modeImg" src=""  ></div>
+		    			<div class="modeDesc clearfix">
+		    				<p class="descTitle">固定收益</p>
+		    				<p class="descText">赚取收益优先</p>
+		    			</div>
+		    		</div>
+	    		</div>
+	    		<div class="incomeMode m_0">
+	    			<div style="float:left;margin-top:6px;color: #bbb;">网速更快</div>
+	    			<div class="modeImg" src=""  ></div>
+	    			<div class="modeDesc clearfix">
+	    				<p class="descTitle">暂停</p>
+	    				<p class="descText">暂停赚钱2小时</p>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
+		<p class="fixedIncomeRemind">您已参加固定收益，一天只能暂停一次。</p>
+		<div id="stException" style="text-align: left;position: absolute;left: 115px;bottom: 130px;color: #ff6666;display:none;">测速异常，请重试</div>
+	    <div class="testOperate">
+	    	<div id="yunSucc">
+		    	<div>
+		    		<a class="testBut">检测上行带宽</a>
+		    		<a class="saveBut">保 存</a>
+		    	</div>
+		    	<div style="text-align: left;margin-top:10px;color:#bbb;">
+		    		<span class="test_remark">也可以拖动设置上行带宽</span>
+		    		<span class="save_remark">分时段设置赚钱模式<a href="http://mobile.youku.com/index/luyoubao" target="_blank">下载APP</a></span>
+		    	</div>
+	    	</div>
+	    	<p id="yunError" style="color:#ff6666;margin:20px 0px;text-align:center;font-size: 13px;">您的网络似乎有点问题，请检查网络连接或稍后重试。</p>
+	    </div>
+	    <div class="bottomText"></div>
+	</div>
+	<!-- 通用浮层，供showPop调用 -->
+	<div class="commonFloat" id="commonFloat" style="">
+		<a href="###" class="colse_df close"></a>
+		<div class="acdiv">
+			<span class="title"></span>
+			<div class="c_content">
+				<p class="alipay_remind">花呗专享固定收益计划为优酷路由宝花呗定制版用户专享，</p>
+				<p class="alipay_remind">首次加入之日起9个月（270天）内，在线一天得134优金币（合每月10元）</p>
+			</div>
+		</div>
+		<div class="butDetail">
+			<a href="##" class="alipayOk" >我知道了</a>
+			<a href="##" class="alipayCancel">我知道了</a>
+		</div>
+	</div>
+	<!-- 点击带宽自运营过度状态 -->
+	<div id="preloadbandwidth">
+		<span class="loadingbig"></span>
+	</div>
+</body>
+<script>
+var scaleArr = [0,0.25,0.5,1,1.5,2,3,4,5,6,7,8,9,10,15,20,25,30,40,50,60,70,80,90,100];//可区分网速，单位Mbps
+var percentArr = [0,4,8,17,22,27,32,36,41,46,48,50,52,55,60,64,69,73,78,83,85,87,89,91,92];//可区分网速对应的刻度尺
+
+$(function() {
+    $( "#slider-vertical" ).slider({
+    	orientation: "vertical",
+      	range: "min",
+      	min: 0,
+      	max: 100,
+      	value: 0,
+      	animate: true,
+      	slide: function( event, ui ) {}
+    });
+    
+});
+</script>
+</html>

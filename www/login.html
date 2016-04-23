@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>优酷土豆路由宝</title>
+<link rel="stylesheet" type="text/css" href="css/reset.css?ver=20160121">
+<link rel="stylesheet" type="text/css" href="css/networkset.css?ver=20160121">
+<link rel="stylesheet" type="text/css" href="extend/css/hefot.css?ver=20160121">
+ <script type="text/javascript" charset="utf-8"  src="js/jquery.min.js?ver=20160121"></script>
+ <script type="text/javascript" charset="utf-8"  src="js/jquery.base64.js?ver=20160121"></script>
+ <script type="text/javascript" charset="utf-8"  src="js/jquery.cookie.js?ver=20160121"></script>
+ <script type="text/javascript" charset="utf-8"  src="js/jquery.tabs.js?ver=20160121"></script>
+ <script type="text/javascript" charset="utf-8"  src="js/json2.js?ver=20160121"></script>
+ <script type="text/javascript" charset="utf-8"  src="js/public.js?ver=20160121"></script>
+ <script type="text/javascript" charset="utf-8"  src="extend/js/login_common.js?ver=20160121"></script>
+ <script type="text/javascript">
+    $(function(){
+	    $.getJSON(baseUrl,{op:"get",context:createContext("basic")},
+            function(data){
+				if(data.result && (data.result==4034)){
+					window.location.href="403.html?t="+new Date().getTime();
+				}
+		        if(data.result==0 && data.data.initflag == 0){
+				    if (isMobile()) {
+						window.location.href="H5quick_setup.html?t="+new Date().getTime();
+					}else{
+						window.location.href="quick_setup.html?t="+new Date().getTime();
+					}    
+		        }
+				$("#youkuversion").html(data.data.curver);
+        	}
+	    );
+	});
+ </script>
+</head>
+<body class="body_top" style="min-width: 1250px;">
+    <div class="conter_bg"><div class="conter_logo"></div></div>
+    <div class="form-container">
+        <div class="form-panels clrfx" id="formPanels" style="margin-left: 0px;">
+            <div class="panel" id="pwdPanel">
+                 <div class="err-tip" id="forAdminPwd" style="visibility:hidden;">
+                    <span class="icon-warn">密码有误，请重新输入</span> 
+                 </div>
+				 <span class="pw-holder">请输入管理密码</span>
+                 <input type="password" class="field-con field-con_red"  id="admin_pwd_txt" onkeydown="if(event.keyCode==13)adminlogin();">
+                 <input id="adminBtn" type="button" class="login-submit" value="登 录">
+                 <a href="javascript:void(0)" class="skip-panel" id="goLoginSnPanel">找回密码</a> 
+            </div>
+            <div class="panel sn-panel" id="snPanel" style="display:none">
+                <div class="err-tip" id="forSNPwd" style="visibility:hidden;">
+                    <span class="icon-warn">SN号不正确，请重新输入</span> 
+                </div>
+                   <label>用路由宝的S/N号登录（登录后请重设管理密码）</label>
+				    <span class="pw-holder pw-holder_font">请输入路由宝的S/N号的后6位</span>
+                    <input type="password" class="field-con field-con_red" id="sn_pwd_txt" onkeydown="if(event.keyCode==13)snlogin();">
+                    <input id="snBtn" type="button" class="login-submit" value="登 录">
+                    <a href="javascript:void(0)" class="skip-panel" id="goBackLoginPanel">返 回</a>
+               </div>
+             </div>  
+           </div>
+   <div class="footer footer_loin"></div>
+<script type="text/javascript">
+   	var sendingOk = true;
+	$("#goLoginSnPanel").on("click",function(){
+		$("#formPanels").animate({"marginLeft":"-300px"},350,function(){
+        	$("#snPanel").show();
+       	});
+    });  
+	$("#goBackLoginPanel").on("click",function(){
+    	$("#formPanels").animate({"marginLeft":"0"},350,function(){
+        	$("#snPanel").hide();
+       	});
+    }); 
+	 
+	var itemInputs=$(".field-con");
+	itemInputs.on("focus",function(){
+		$(this).prev(".pw-holder").hide();
+		$(".err-tip").css("visibility","hidden");
+	}).on('blur',function(){
+		val=$(this).val();
+	    if(!val){
+	    	$(this).prev(".pw-holder").show();
+	 	}
+	});
+	
+	$(".pw-holder").on("click",function(){
+		$(this).hide();
+		$(this).next().focus();
+	});
+
+	//登陆
+	function loginSend(dataStr,flag){
+		sendingOk = false;
+		$.getJSON(baseUrl,{op:"login",context:createContext(dataStr)},function(data){
+			sendingOk = true;
+			if(data.result==0){
+			   	if(data.data.key){
+				 	$.cookie("key",data.data.key,{expires:0.25});
+			   	}
+			   	var key=$.cookie("key");
+			   	if(key){
+				 	window.location.href="dashboard.html?t="+new Date().getTime();
+			   	}
+			}else{
+		    	if(data.result && (data.result==4034)){
+					window.location.href="403.html?t="+new Date().getTime();
+				}
+		       	if(flag=="1"){
+			    	var errTip=$("#forAdminPwd");
+			    	errTip.css("visibility","visible");
+			    	errTip.find("span:eq(0)").html("密码有误，请重新输入");
+			    	$("#adminBtn").val("登 录");
+			   	}else{
+			     	var errTip=$("#forSNPwd");
+	             	errTip.css("visibility","visible");
+	             	errTip.find("span:eq(0)").html("SN号不正确，请重新输入");
+	             	$("#snBtn").val("登 录");
+			   	}
+		       	window.clearInterval(t1);
+		   	}
+		});
+	} 
+	
+	function adminlogin(){
+	    var adminPwd=$("#admin_pwd_txt");
+		if(!(adminPwd.val())){
+		  var errTip=$("#forAdminPwd");
+		  errTip.css("visibility","visible");
+		  errTip.find("span:eq(0)").html("密码不能为空！");
+		}else{
+			loginStatus($("#adminBtn"));
+		  	loginSend("ad"+adminPwd.val(),"1");
+		}
+		return false;
+	}
+	
+	function snlogin(){
+	    var sn_pass = $("#sn_pwd_txt");
+		if(!(sn_pass.val())){
+		   var errTip=$("#forSNPwd");
+		   errTip.css("visibility","visible");
+		   errTip.find("span:eq(0)").html("SN不能为空！");
+		}else{
+		   var pass = $("#admin_pwd_txt");
+		   $(pass).attr('value', $(sn_pass).val());
+		   var logType = $("#loginType");
+		   loginStatus($("#snBtn"));
+		   loginSend("sn"+sn_pass.val(),"2");  
+		}
+		return false;	
+	}
+	
+	$("#adminBtn").click(function(e){
+		if (!sendingOk) {
+			return false;
+		}
+		adminlogin();
+	  });
+	  
+    $("#snBtn").click(function(){ 
+    	if (!sendingOk) {
+			return false;
+		}
+       snlogin();
+    });
+	
+    var t1;
+    function loginStatus(but){
+    	var count = 0;
+    	var butVal = "登 录 中";
+    	but.val(butVal);
+    	t1 = window.setInterval(function(){
+    		if (count == 3) {
+    			butVal = "登 录 中";
+    			count = 0;
+			}else{
+	    		butVal += " .";
+	    		but.val(butVal);
+	        	count++;
+			}
+    	}, 500)
+    }
+</script>
+</body>
+</html>

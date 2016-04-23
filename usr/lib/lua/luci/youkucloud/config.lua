@@ -60,6 +60,8 @@ DISK_BIN_DIR = "/tmp/youku/mnt/tf0/tmp/"
 LINK_ROM_BIN_FILE = "[ -d "..DISK_BIN_DIR.." ] && touch "..DISK_BIN_DIR.."image.bin && ln -fs "..DISK_BIN_DIR.."image.bin /tmp/image.bin"
 DELETE_IMAGE = "rm -rf "..ROM_BIN_FILE
 
+DELETE_ROOT_PWD = "passwd -d root"
+
 NETMON_LOG_FILE = "/tmp/youku/stat/netmon.log"
 
 -- DHCP lease file

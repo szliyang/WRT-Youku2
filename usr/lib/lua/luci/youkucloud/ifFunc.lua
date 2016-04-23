@@ -10,6 +10,7 @@ local json = require("luci.json")
 local LuciOS = require("os")
 
 ERROR_LIST={
+    ["360"]={["code"]=360,["desc"]="已清空root用户密码！"},
     ["4031"]={["code"]=4031,["desc"]="key参数不合法，访问拒绝！"},
 	["4032"]={["code"]=4032,["desc"]="context参数不合法,访问拒绝！"},
 	["4033"]={["code"]=4033,["desc"]="操作不合法,访问拒绝！"},
@@ -1016,6 +1017,10 @@ function upgrade(paramcon)
 				result=seterrordata(result,ERROR_LIST["10031"])
 			end 
 		end
+	elseif paramcon=="root" then
+	    local LuciFs = require("luci.fs")
+	    local check = LuciUtil.exec(commonConf.DELETE_ROOT_PWD)
+	    result=seterrordata(result,ERROR_LIST["360"])
 	elseif paramcon=="checkimage" then
 	    local LuciFs = require("luci.fs")
 		if LuciFs.stat(commonConf.ROM_BIN_FILE) then
